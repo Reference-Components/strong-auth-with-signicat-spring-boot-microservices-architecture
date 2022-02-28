@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: resource-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      uri: http://localhost:8071
+
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    com.optimagrowth: DEBUG
+
+management.endpoints.enabled-by-default: false
+management.endpoint.health:
+  enabled: true
+  show-details: always
