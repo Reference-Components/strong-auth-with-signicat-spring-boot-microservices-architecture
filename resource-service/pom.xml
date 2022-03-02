@@ -90,7 +90,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>app</finalName>
+		<finalName>resourceservice</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

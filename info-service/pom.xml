@@ -77,7 +77,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>app</finalName>
+		<finalName>infoservice</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

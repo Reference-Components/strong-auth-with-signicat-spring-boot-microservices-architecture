@@ -1,0 +1,119 @@
+version: "3.2"
+
+services:
+  configserver:
+    image: configserver:latest
+    build:
+      context: ./../configserver
+      dockerfile: Dockerfile
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+    networks:
+      backend:
+        aliases:
+          - "configserver"
+  eurekaserver:
+    image: eurekaserver:latest
+    build:
+      context: ./../eurekaserver
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver"
+  gatewayserver:
+    image: gatewayserver:latest
+    build:
+      context: ./../gatewayserver
+      dockerfile: Dockerfile
+    ports:
+      - "8072:8072"
+    environment:
+      PROFILE: "default"
+      SERVER_PORT: "8072"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      EUREKASERVER_URI: "http://eurekaserver:8070/eureka/"
+      EUREKASERVER_PORT: "8070"
+      CONFIGSERVER_PORT: "8071"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
+    networks:
+      backend:
+        aliases:
+          - "gateway"
+  infoservice:
+    image: infoservice:latest
+    build:
+      context: ./../info-service
+      dockerfile: Dockerfile
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT: "8071"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
+    ports:
+      - "8081:8081"
+    networks:
+      backend:
+        aliases:
+          - "infoservice"
+  resourceservice:
+    image: resourceservice:latest
+    build:
+      context: ./../resource-service
+      dockerfile: Dockerfile
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT: "8071"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
+    ports:
+      - "8082:8082"
+    networks:
+      backend:
+        aliases:
+          - "resourceservice"
+  keycloak:
+    image: jboss/keycloak
+    restart: always
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    volumes:
+      - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
+    command:
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
+      - "-Dkeycloak.profile.feature.scripts=enabled"
+      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+    ports:
+      - "8080:8080"
+    networks:
+      backend:
+        aliases:
+          - "keycloak"
+networks:
+  backend:
+    driver: bridge
