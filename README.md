@@ -1,4 +1,4 @@
-## Strong auth and API Gateway
+## Strong auth with Signicat - Spring Boot microservices architecture
 
 ### Run the services
 
