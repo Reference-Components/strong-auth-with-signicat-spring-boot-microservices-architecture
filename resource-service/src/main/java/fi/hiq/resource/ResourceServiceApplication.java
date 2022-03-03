@@ -8,7 +8,6 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @RefreshScope
-@EnableDiscoveryClient
 @EnableEurekaClient
 public class ResourceServiceApplication {
 
