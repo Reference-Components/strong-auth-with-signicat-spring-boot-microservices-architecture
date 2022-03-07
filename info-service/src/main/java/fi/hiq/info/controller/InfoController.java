@@ -25,5 +25,5 @@ public class InfoController {
     public ResponseEntity<String> getMessageFromResourceService() {
     	return ResponseEntity.ok(this.infoService.getMessageFromResourceService());
     }
-
+    
 }
