@@ -22,6 +22,7 @@
     <module>configserver</module>
     <module>eurekaserver</module>
     <module>gatewayserver</module>
+    <module>identity-service</module>
     <module>resource-service</module>
     <module>info-service</module>
   </modules>
