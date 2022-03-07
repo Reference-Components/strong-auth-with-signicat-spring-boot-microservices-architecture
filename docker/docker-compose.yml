@@ -55,6 +55,17 @@ services:
       backend:
         aliases:
           - "gateway"
+  identityservice:
+    image: identityservice:latest
+    build:
+      context: ./../identity-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      backend:
+        aliases:
+          - "identityservice"
   infoservice:
     image: infoservice:latest
     build:
@@ -95,25 +106,26 @@ services:
       backend:
         aliases:
           - "resourceservice"
-  keycloak:
-    image: jboss/keycloak
-    restart: always
-    environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-    volumes:
-      - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
-    command:
-      - "-b 0.0.0.0"
-      - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
-      - "-Dkeycloak.profile.feature.scripts=enabled"
-      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
-    ports:
-      - "8080:8080"
-    networks:
-      backend:
-        aliases:
-          - "keycloak"
+  # keycloak:
+  #   image: jboss/keycloak
+  #   restart: always
+  #   environment:
+  #     KEYCLOAK_USER: admin
+  #     KEYCLOAK_PASSWORD: admin
+  #   volumes:
+  #     - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
+  #     - ./saippuakauppias.jks:/opt/jboss/keycloak/saippuakauppias.jks
+  #   command:
+  #     - "-b 0.0.0.0"
+  #     - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
+  #     - "-Dkeycloak.profile.feature.scripts=enabled"
+  #     - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     backend:
+  #       aliases:
+  #         - "keycloak"
 networks:
   backend:
     driver: bridge
