@@ -20,12 +20,14 @@ spring:
           predicates:
             - Path=/info/**
           filters:
+            - RemoveRequestHeader=Cookie
             - RewritePath=/info/(?<path>.*), /$\{path}
         - id: resource-service
           uri: lb://resource-service
           predicates:
             - Path=/resource/**
           filters:
+            - RemoveRequestHeader=Cookie
             - RewritePath=/resource/(?<path>.*), /$\{path}
 
 management:
