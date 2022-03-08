@@ -88,11 +88,11 @@ public class AuthorizationCodeHandler {
     String createSignedClientAssertion(OidcRequestParameters params) throws JOSEException {
         PrivateKey signingKey = keyLoader.getSigningKey().getPrivateKey();
 
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder() //
-                .issuer(params.getClientId()) //
-                .subject(params.getClientId()) //
-                .audience(params.getTokenUrl()).jwtID(UUID.randomUUID().toString()) //
-                .expirationTime(new Date(new Date().getTime() + 600l * 1000l)) //
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .issuer(params.getClientId()) 
+                .subject(params.getClientId()) 
+                .audience(params.getTokenUrl()).jwtID(UUID.randomUUID().toString()) 
+                .expirationTime(new Date(new Date().getTime() + 600l * 1000l)) 
                 .build();
 
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).type(JOSEObjectType.JWT).build();

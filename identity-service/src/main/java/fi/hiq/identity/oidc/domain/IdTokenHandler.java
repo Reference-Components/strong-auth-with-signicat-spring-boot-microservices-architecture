@@ -46,7 +46,6 @@ public class IdTokenHandler {
             Identity identity = new Identity();
             identity.setIdentityRawData(idRawData);
             identity.setName(claims.getStringClaim("name"));
-            identity.setSsn(claims.getStringClaim("personal_identity_code"));
             return identity;
         } catch (JOSEException | ParseException e) {
             logger.error("Error decrypting and extracting identity from id token!", e);

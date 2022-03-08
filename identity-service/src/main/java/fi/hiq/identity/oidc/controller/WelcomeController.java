@@ -124,16 +124,14 @@ public class WelcomeController {
         if (response.getError() == null || response.getError().length() == 0) {
         	String token = getFacade().getToken(response, originalParams);
             Identity identity = getFacade().extractIdentity(token);
-            model.put ("timenow", timenow);
+            model.put("timenow", timenow);
             model.put("token", token);
             model.put("identity", identity);
             model.put("backurlprefix", request.getSession().getAttribute("backUrlPost"));
             return "identity";
-        }
-        else if (response.getError().equals("cancel")) {
+        } else if (response.getError().equals("cancel")) {
         	return "welcome";
-        }
-        else {
+        } else {
             model.put("error", response.getError());
             return "error";
         }
