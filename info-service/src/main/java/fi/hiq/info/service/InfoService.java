@@ -14,10 +14,10 @@ public class InfoService {
 	private static final Logger logger = LoggerFactory.getLogger(InfoService.class);
 	
 	@Autowired
-	ResourceRestTemplateClient resourceDiscoveryClient;
+	ResourceRestTemplateClient resourceRestTemplateClient;
 	
-	public String getMessageFromResourceService() {
-		String message = this.resourceDiscoveryClient.getResourceMessage();
+	public String getMessageFromResourceService(String token) {
+		String message = this.resourceRestTemplateClient.getResourceMessage(token);
 		if (message == null) {
 			logger.debug("getMessageFromResourceService Correlation id: {}",
 					UserContextHolder.getContext().getCorrelationId());
