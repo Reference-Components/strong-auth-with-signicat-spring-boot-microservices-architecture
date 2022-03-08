@@ -8,8 +8,8 @@ public class UserContext {
     public static final String AUTH_TOKEN     = "auth-token";
     public static final String USER_ID        = "user-id";
 
-    private String correlationId= new String();
-    private String authToken= new String();
+    private String correlationId = new String();
+    private String authToken = new String();
     private String userId = new String();
 
     public String getCorrelationId() { 

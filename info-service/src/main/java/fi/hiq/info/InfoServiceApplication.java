@@ -25,7 +25,7 @@ public class InfoServiceApplication {
 	@SuppressWarnings("unchecked")
 	@LoadBalanced
 	@Bean
-	public RestTemplate getRestTemplate(){
+	public RestTemplate getRestTemplate() {
 		RestTemplate template = new RestTemplate();
         List interceptors = template.getInterceptors();
         if (interceptors == null){
@@ -37,5 +37,5 @@ public class InfoServiceApplication {
 
         return template;
 	}
-
+	
 }
