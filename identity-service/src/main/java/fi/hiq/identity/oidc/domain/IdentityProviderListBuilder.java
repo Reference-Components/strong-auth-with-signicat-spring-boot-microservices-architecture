@@ -19,14 +19,8 @@ import fi.hiq.identity.oidc.domain.idp.IdentityProviderList;
 public class IdentityProviderListBuilder {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(IdentityProviderListBuilder.class);
 
-    // Url from which we retrieve the list of identity providers.
     private String idpUrl;
 
-    /**
-     * @param url
-     *            The url from which to get identity providers. <br/>
-     *            Can be null. If null, builds url based on configuration.
-     */
     public IdentityProviderListBuilder(String url) {
         if (url == null) {
             String defaultUrl = Configuration.IDP_LIST_URL;
@@ -54,11 +48,6 @@ public class IdentityProviderListBuilder {
         return jwt;
     }
 
-    /**
-     * Retrieves the list of identity providers from the identity broker.
-     *
-     * @return The list of identity providers.
-     */
     public IdentityProviderList build(String language) {
         try {
             logger.info("Listing identity providers from {}", this.idpUrl);

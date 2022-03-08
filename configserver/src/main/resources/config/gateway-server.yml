@@ -20,15 +20,31 @@ spring:
           predicates:
             - Path=/info/**
           filters:
-            - RemoveRequestHeader=Cookie
+            - RemoveRequestHeader=Cookie,Set-Cookie
             - RewritePath=/info/(?<path>.*), /$\{path}
         - id: resource-service
           uri: lb://resource-service
           predicates:
             - Path=/resource/**
           filters:
-            - RemoveRequestHeader=Cookie
+            - RemoveRequestHeader=Cookie,Set-Cookie
             - RewritePath=/resource/(?<path>.*), /$\{path}
+  security:
+    oauth2:
+      client:
+        registration:
+          gateway:
+            provider: identity-service
+            client-id: gateway
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,personal_identity_code
+        provider:
+          identity-service:
+            authorization-uri: http://localhost:8080
+            token-uri: https://isb-test.op.fi/oauth/token
+            issuer-uri: https://isb-test.op.fi
 
 management:
   endpoints:
