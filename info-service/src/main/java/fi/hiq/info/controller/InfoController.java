@@ -17,19 +17,14 @@ public class InfoController {
 	private InfoService infoService;
 	
 	
-    @RequestMapping(value="/hello",method = RequestMethod.GET)
-    public ResponseEntity<String> get() {
+    @RequestMapping(value="/hello", method = RequestMethod.GET)
+    public ResponseEntity<String> getHello() {
         return ResponseEntity.ok("Response from info-service");
     }
     
-    @RequestMapping(value="/resource-message",method = RequestMethod.GET)
+    @RequestMapping(value="/resource-message", method = RequestMethod.GET)
     public ResponseEntity<String> getMessageFromResourceService(@RequestHeader("Authorization") String token) {
     	return ResponseEntity.ok(this.infoService.getMessageFromResourceService(token));
     }
-    
-    @RequestMapping(value="/allowed",method = RequestMethod.GET)
-    public ResponseEntity<String> getAllowed() {
-        return ResponseEntity.ok("Response from publicly available endpoint on info-service");
-    }
-    
+
 }
