@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class ResponseFilter {
  
-    final Logger logger =LoggerFactory.getLogger(ResponseFilter.class);
+    final Logger logger = LoggerFactory.getLogger(ResponseFilter.class);
     
     @Autowired
 	FilterUtils filterUtils;
