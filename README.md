@@ -1,4 +1,4 @@
-## Strong auth with Signicat - Spring Boot microservices architecture
+## Strong auth with OP strong auth broker - Spring Boot microservices architecture
 
 ### Run the services
 
