@@ -1,18 +1,23 @@
 package fi.hiq.gateway.filters;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 
+import fi.hiq.gateway.dto.ErrorResponseDto;
 import reactor.core.publisher.Mono;
 
 @Order(0)
@@ -20,11 +25,15 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthFilter implements GlobalFilter {
 
+	private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
+	
 	@Autowired
 	FilterUtils filterUtils;
 	
 	@Autowired
     private JwtUtil jwtUtil;
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -33,29 +42,29 @@ public class AuthFilter implements GlobalFilter {
 		if (authToken != null) {
 			IDTokenClaimsSet claims = jwtUtil.getAllClaimsFromToken(authToken);
 			if (claims == null) {
-				System.out.println("Authorization header is invalid");
-				return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+				return this.onError(exchange, "Authorization token is invalid", HttpStatus.UNAUTHORIZED);
 			}
-			System.out.println("All is well");
-			this.populateRequestWithHeaders(exchange, claims);
 		} else {
-			System.out.println("Authorization header is missing in request");
 			return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
 		}
 		
 		return chain.filter(exchange);
 	}
 
-	private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        return response.setComplete();
+	private Mono<Void> onError(ServerWebExchange exchange, String errMsg, HttpStatus httpStatus) {
+        exchange.getResponse().setStatusCode(httpStatus);
+        exchange.getResponse().getHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        
+		try {
+			ErrorResponseDto errorDto = new ErrorResponseDto(httpStatus, errMsg);
+			byte[] bytes = objectMapper.writeValueAsBytes(errorDto);
+			DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+			return exchange.getResponse().writeWith(Mono.just(buffer));
+		} catch (JsonProcessingException e) {
+			logger.debug("Failed to process json", e);
+			exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+            return exchange.getResponse().setComplete();
+		}
+         
     }
-	
-	private void populateRequestWithHeaders(ServerWebExchange exchange, IDTokenClaimsSet claims) {
-        exchange.getRequest().mutate()
-                .header("subject", String.valueOf(claims.getSubject()))
-                .build();
-    }
-
 }
