@@ -42,7 +42,7 @@ public class JwtUtil {
 		try {
 			this.jwkSetURL = new URL(JWK_SET_URL);
 		} catch (MalformedURLException e) {
-			logger.debug("Failed to init jwkSetUrl {}: ", e.getMessage());
+			logger.debug("Failed to init jwkSetUrl {}: ", e);
 		}
 	}
 	
@@ -55,11 +55,11 @@ public class JwtUtil {
 			JWT idToken = JWTParser.parse(token);
 		    claims = validator.validate(idToken, null);
 		} catch (BadJOSEException e) {
-			logger.debug("Invalid signature or claims {}: ", e.getMessage());
+			logger.debug("Invalid signature or claims {}: ", e);
 		} catch (JOSEException e) {
-			logger.debug("Internal processing exception {}: ", e.getMessage());
+			logger.debug("Internal processing exception {}: ", e);
 		} catch (ParseException e) {
-			logger.debug("Failed to parse token {}: ", e.getMessage());
+			logger.debug("Failed to parse token {}: ", e);
 		}
 		
 		return claims;
