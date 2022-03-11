@@ -10,6 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -28,6 +29,9 @@ public class AuthFilter implements GlobalFilter {
 	private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 	
 	@Autowired
+    private RouterValidator routerValidator;
+	
+	@Autowired
 	FilterUtils filterUtils;
 	
 	@Autowired
@@ -37,17 +41,20 @@ public class AuthFilter implements GlobalFilter {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
-		String authToken = filterUtils.getAuthorizationToken(requestHeaders);
-		if (authToken != null) {
-			IDTokenClaimsSet claims = jwtUtil.getAllClaimsFromToken(authToken);
-			if (claims == null) {
-				return this.onError(exchange, "Authorization token is invalid", HttpStatus.UNAUTHORIZED);
-			}
-		} else {
-			return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+		ServerHttpRequest request = exchange.getRequest();
+			
+		if (routerValidator.isSecured.test(request)) {
+			String authToken = filterUtils.getAuthorizationToken(request.getHeaders());
+			if (authToken != null) {
+				IDTokenClaimsSet claims = jwtUtil.getAllClaimsFromToken(authToken);
+				if (claims == null) {
+					return this.onError(exchange, "Authorization token is invalid", HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+			}	
 		}
-		
+
 		return chain.filter(exchange);
 	}
 
