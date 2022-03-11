@@ -18,7 +18,7 @@ import fi.hiq.identity.oidc.domain.OidcRequestParameters;
 import fi.hiq.identity.oidc.domain.OidcResponseParameters;
 import fi.hiq.identity.oidc.facade.OidcDemoFacade;
 
-@RestController(value = "v1/identity")
+@RestController(value = "v1")
 public class AuthRestController {
     
 	private final Logger logger = LoggerFactory.getLogger(AuthRestController.class);
