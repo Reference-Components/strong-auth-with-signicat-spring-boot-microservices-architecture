@@ -42,7 +42,8 @@ public class AuthFilter implements GlobalFilter {
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = exchange.getRequest();
-			
+		System.out.println("*************************************");
+		System.out.println(request.getURI().getPath());	
 		if (routerValidator.isSecured.test(request)) {
 			String authToken = filterUtils.getAuthorizationToken(request.getHeaders());
 			if (authToken != null) {
