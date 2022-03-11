@@ -5,27 +5,17 @@ import java.io.Serializable;
 public class Identity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // Social security number
-    private String ssn;
     // First & maybe middle / last name.
     private String name;
     private String identityRawData;
+    private String idToken;
 
     public Identity() {
         // Does nothing but required by SonarQube.
     }
 
-    public Identity(String ssn, String name) {
-        this.ssn = ssn;
+    public Identity(String name) {
         this.name = name;
-    }
-
-    public String getSsn() {
-        return ssn;
-    }
-
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
     }
 
     public String getName() {
@@ -36,8 +26,6 @@ public class Identity implements Serializable {
         this.name = name;
     }
 
-
-
 	public String getIdentityRawData() {
 		return identityRawData;
 	}
@@ -45,4 +33,13 @@ public class Identity implements Serializable {
 	public void setIdentityRawData(String identityRawData) {
 		this.identityRawData = identityRawData;
 	}
+
+	public String getIdToken() {
+		return idToken;
+	}
+
+	public void setIdToken(String idToken) {
+		this.idToken = idToken;
+	}
+
 }

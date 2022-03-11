@@ -25,31 +25,43 @@ public class IdTokenHandler {
 
     public Identity extractIdentity(String idToken, KeystoreLoader keystore, JwksLoader jwksLoader) {
         try {
+        	String decryptedIdToken = this.decryptIdToken(idToken, keystore);
+        	
+            SignedJWT signedJwt = SignedJWT.parse(decryptedIdToken);
+            RSAPublicKey signatureVerificationKey = jwksLoader.getKeyById(signedJwt.getHeader().getKeyID(), true)
+                    .getPublicKey();
+            verifySignature(signedJwt, signatureVerificationKey);
+            JWTClaimsSet claims = signedJwt.getJWTClaimsSet();
+
+            String idRawData = signedJwt.getPayload().toString();
+            logger.info("Payload: " + idRawData);
+            idRawData = idRawData.replace(",", ",\n\t");
+            idRawData = idRawData.replace("{", "{\n\t");
+            idRawData = idRawData.replace("}", "\n}");
+            Identity identity = new Identity();
+            identity.setIdToken(decryptedIdToken);
+            identity.setIdentityRawData(idRawData);
+            identity.setName(claims.getStringClaim("name"));
+            return identity;
+        } catch (JOSEException | ParseException e) {
+            logger.error("Error extracting identity from id token!", e);
+            throw new OidcDemoException("Error extracting identity from id token!");
+        }
+    }
+
+    public String decryptIdToken(String idToken, KeystoreLoader keystore) {
+        try {
             EncryptedJWT e = EncryptedJWT.parse(idToken);
             String keyId = e.getHeader().getKeyID();
             PrivateKey decryptionKey = keystore.getKeyById(keyId, true).getPrivateKey();
             JWEDecrypter d = new RSADecrypter(decryptionKey);
             e.decrypt(d);
             logger.info("Decrypted id token: {}", e.getPayload().toString());
-
-            SignedJWT decrypted = SignedJWT.parse(e.getPayload().toString());
-            RSAPublicKey signatureVerificationKey = jwksLoader.getKeyById(decrypted.getHeader().getKeyID(), true)
-                    .getPublicKey();
-            verifySignature(decrypted, signatureVerificationKey);
-            JWTClaimsSet claims = decrypted.getJWTClaimsSet();
-
-            String idRawData=decrypted.getPayload().toString();
-            logger.info("Payload: " + idRawData);
-            idRawData = idRawData.replace(",", ",\n\t");
-            idRawData = idRawData.replace("{", "{\n\t");
-            idRawData = idRawData.replace("}", "\n}");
-            Identity identity = new Identity();
-            identity.setIdentityRawData(idRawData);
-            identity.setName(claims.getStringClaim("name"));
-            return identity;
+            
+            return e.getPayload().toString();
         } catch (JOSEException | ParseException e) {
-            logger.error("Error decrypting and extracting identity from id token!", e);
-            throw new OidcDemoException("Error decrypting and extracting identity from id token!");
+            logger.error("Error decrypting id token!", e);
+            throw new OidcDemoException("Error decrypting id token!");
         }
     }
 

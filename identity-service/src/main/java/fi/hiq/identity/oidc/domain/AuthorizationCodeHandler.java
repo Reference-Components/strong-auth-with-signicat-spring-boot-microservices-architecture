@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.PrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,10 +27,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -41,7 +47,7 @@ public class AuthorizationCodeHandler {
         this.keyLoader = keyLoader;
     }
 
-    public String exchangeForIdToken(String authorizationCode, OidcRequestParameters contract) throws Exception {
+    public String exchangeCodeForIdToken(String authorizationCode, OidcRequestParameters contract) throws Exception {
 
         URL url = new URL(contract.getTokenProxy());
         String idTokenHost = url.getHost();
@@ -65,7 +71,13 @@ public class AuthorizationCodeHandler {
         return parseIdToken(post(target, request));
     }
 
-    String post(HttpHost target, HttpPost request) throws IOException {
+    private String parseIdToken(String jsonResponse) {
+        JsonElement jelement = new JsonParser().parse(jsonResponse);
+        JsonObject jobject = jelement.getAsJsonObject();
+        return jobject.get("id_token").getAsString();
+    }
+   
+    public String post(HttpHost target, HttpPost request) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse response = httpclient.execute(target, request);
 
@@ -78,14 +90,8 @@ public class AuthorizationCodeHandler {
         httpclient.close();
         return jwt;
     }
-
-    String parseIdToken(String jsonResponse) {
-        JsonElement jelement = new JsonParser().parse(jsonResponse);
-        JsonObject jobject = jelement.getAsJsonObject();
-        return jobject.get("id_token").getAsString();
-    }
-
-    String createSignedClientAssertion(OidcRequestParameters params) throws JOSEException {
+    
+    private String createSignedClientAssertion(OidcRequestParameters params) throws JOSEException {
         PrivateKey signingKey = keyLoader.getSigningKey().getPrivateKey();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
