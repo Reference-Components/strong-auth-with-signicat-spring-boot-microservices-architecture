@@ -122,10 +122,8 @@ public class AuthController {
         String timenow = dtf.format(now);
 
         if (response.getError() == null || response.getError().length() == 0) {
-        	String token = getFacade().getToken(response, originalParams);
-            Identity identity = getFacade().extractIdentity(token);
+            Identity identity = getFacade().extractIdentity(response, originalParams);
             model.put("timenow", timenow);
-            model.put("token", token);
             model.put("identity", identity);
             model.put("backurlprefix", request.getSession().getAttribute("backUrlPost"));
             return "identity";
@@ -135,12 +133,6 @@ public class AuthController {
             model.put("error", response.getError());
             return "error";
         }
-    }
-
-    @RequestMapping(method = { RequestMethod.GET }, value = "/jwks", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public String jwks() {
-        return getFacade().getJwks();
     }
 
     private OidcDemoFacade getFacade() {

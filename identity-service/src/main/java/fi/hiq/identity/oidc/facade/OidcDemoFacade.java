@@ -49,26 +49,26 @@ public class OidcDemoFacade {
         authorizationCodeHandler = new AuthorizationCodeHandler(keyLoader);
         idTokenHandler = new IdTokenHandler(keyLoader);
     }
-    
-    public String getToken(OidcResponseParameters response, OidcRequestParameters requestData) {
-        try {
-            String idToken = authorizationCodeHandler.exchangeForIdToken(response.getCode(), requestData);
-            logger.info("ID Token: {}", idToken);
 
-            return idToken;
+    public Identity extractIdentity(OidcResponseParameters response, OidcRequestParameters requestData) {
+        try {
+            jwksLoader.setJwksProxy(Configuration.JWKS_PROXY);
+            String encryptedIdToken = this.getIdToken(response, requestData);
+            return idTokenHandler.extractIdentity(encryptedIdToken, keyLoader, jwksLoader);
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new OidcDemoException("Error extracting identity!", e);
         }
     }
-
-    public Identity extractIdentity(String idToken) {
+    
+    private String getIdToken(OidcResponseParameters response, OidcRequestParameters requestData) {
         try {
-            jwksLoader.setJwksProxy(Configuration.JWKS_PROXY);
-            return idTokenHandler.extractIdentity(idToken, keyLoader, jwksLoader);
+            String idToken = authorizationCodeHandler.exchangeCodeForIdToken(response.getCode(), requestData);
+            logger.info("Encrypted ID Token: {}", idToken);
+            return idToken; 
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new OidcDemoException("Error extracting identity!", e);
+            throw new OidcDemoException("Error extracting decrypted ID token!", e);
         }
     }
 

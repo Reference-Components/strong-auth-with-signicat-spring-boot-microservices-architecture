@@ -11,7 +11,8 @@ public class Configuration {
     public static final String TOKEN_PROXY = "https://isb-test.op.fi/oauth/token";
     public static final String IDP_LIST_URL = "https://isb-test.op.fi/api/embedded-ui/";
     public static final String PROMPT = "auto";
-    public static final String REDIRECT_URI = "http://localhost:8080/finishFlow";
+//    public static final String REDIRECT_URI = "http://localhost:8080/finishFlow";
+    public static final String REDIRECT_URI = "http://localhost:8080/foo";
     public static final String SCOPE = "openid profile personal_identity_code";
 
     private Configuration() {
