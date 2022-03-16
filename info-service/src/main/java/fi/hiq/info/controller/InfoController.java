@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.hiq.info.service.InfoService;
 
 @RestController
-@RequestMapping(value="v1/info")
+@RequestMapping
 public class InfoController {
     
 	@Autowired

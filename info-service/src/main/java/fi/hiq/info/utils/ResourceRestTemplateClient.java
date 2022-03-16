@@ -23,7 +23,7 @@ public class ResourceRestTemplateClient {
 		
         ResponseEntity<String> exchange =
                 restTemplate.exchange(
-                        "http://resource-service/v1/resource/hello",
+                        "http://resource-service/hello",
                         HttpMethod.GET,
                         entityReq, String.class);
 
