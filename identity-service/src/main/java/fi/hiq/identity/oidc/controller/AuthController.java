@@ -26,10 +26,8 @@ public class AuthController {
     private OidcFacade facade;
 
     @RequestMapping(value="/authorize", method = RequestMethod.GET)
-    public String initFlow(HttpServletRequest request, Map<String, Object> model) {
+    public ResponseEntity<Map<String, Object>> initFlow(HttpServletRequest request, Map<String, Object> model) {
 
-    	request.getSession().setAttribute("backurlprefix", "");
-    	
         String language = "fi";
         String idp = request.getParameter("idp");
         String requestId = UUID.randomUUID().toString();
@@ -38,11 +36,11 @@ public class AuthController {
 
         boolean prompt = promptParam != null && promptParam.equals("consent");
         OidcRequestParameters params = getFacade().oidcAuthMessage(idp, language, requestId, prompt, purpose);
-        logger.info("Request: {}", params.getRequest());
+        logger.info("Auth Request: {}", params.getRequest());
         model.put("endpointUrl", params.getEndpointUrl());
         model.put("request", params.getRequest());
         request.getSession().setAttribute("initParams", params);
-        return params.getEndpointUrl() + "?request=" + params.getRequest();
+        return ResponseEntity.ok(model);
     }
 
     @RequestMapping(value="/token", method = RequestMethod.GET)
@@ -56,7 +54,6 @@ public class AuthController {
         if (response.getError() == null || response.getError().length() == 0) {
             Identity identity = getFacade().extractIdentity(response, originalParams);
             model.put("identity", identity);
-            model.put("backurlprefix", request.getSession().getAttribute("backUrlPost"));
         } else if (response.getError().equals("cancel")) {
         	model.put("error", response.getError());
         } else {
