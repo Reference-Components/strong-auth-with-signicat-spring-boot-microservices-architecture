@@ -51,6 +51,8 @@ public class AuthController {
         response.setState(request.getParameter("state"));
         response.setCode(request.getParameter("code"));
 
+        verifyStateParams(request, originalParams, response);        
+
         if (response.getError() == null || response.getError().length() == 0) {
             Identity identity = getFacade().extractIdentity(response, originalParams);
             model.put("identity", identity);
@@ -62,6 +64,18 @@ public class AuthController {
         
         return ResponseEntity.ok(model);
     }
+
+	private void verifyStateParams(HttpServletRequest request, OidcRequestParameters originalParams,
+			OidcResponseParameters response) {
+		if (originalParams.getState() == null || 
+        	originalParams.getState().length() == 0 ||
+        	request.getParameter("state") == null || 
+        	request.getParameter("state").length() == 0) {
+        	response.setError("Request missing state param");
+        } else if (!originalParams.getState().equals(request.getParameter("state"))) {
+        	response.setError("Invalid state");
+        }
+	}
 
     @RequestMapping(value = "/jwks", method = RequestMethod.GET)
     @ResponseBody
