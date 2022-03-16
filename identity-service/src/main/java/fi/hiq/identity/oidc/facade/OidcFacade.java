@@ -25,9 +25,9 @@ import fi.hiq.identity.oidc.domain.OidcKey;
 import fi.hiq.identity.oidc.domain.OidcRequestParameters;
 import fi.hiq.identity.oidc.domain.OidcResponseParameters;
 
-public class OidcDemoFacade {
+public class OidcFacade {
 
-    private final Logger logger = LoggerFactory.getLogger(OidcDemoFacade.class);
+    private final Logger logger = LoggerFactory.getLogger(OidcFacade.class);
 
     // Stores private encryption key and private signing key
     private KeystoreLoader keyLoader;
@@ -41,7 +41,7 @@ public class OidcDemoFacade {
     private IdTokenHandler idTokenHandler;
 
     @Autowired
-    public OidcDemoFacade() {
+    public OidcFacade() {
         String location = Configuration.KEYSTORE_LOCATION;
         keyLoader = new KeystoreLoader(location);
         jwksLoader = new JwksLoader();

@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.hiq.identity.oidc.domain.Identity;
 import fi.hiq.identity.oidc.domain.OidcRequestParameters;
 import fi.hiq.identity.oidc.domain.OidcResponseParameters;
-import fi.hiq.identity.oidc.facade.OidcDemoFacade;
+import fi.hiq.identity.oidc.facade.OidcFacade;
 
 @RestController
 public class AuthController {
     
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private OidcDemoFacade facade;
+    private OidcFacade facade;
 
     @RequestMapping(value="/authorize", method = RequestMethod.GET)
     public String initFlow(HttpServletRequest request, Map<String, Object> model) {
@@ -72,9 +72,9 @@ public class AuthController {
         return getFacade().getJwks();
     }
 
-    private OidcDemoFacade getFacade() {
+    private OidcFacade getFacade() {
         if (facade == null) {
-            facade = new OidcDemoFacade();
+            facade = new OidcFacade();
         }
         return facade;
     }
