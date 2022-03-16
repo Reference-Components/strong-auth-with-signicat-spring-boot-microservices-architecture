@@ -45,17 +45,25 @@ public class AuthController {
 
     @RequestMapping(value="/token", method = RequestMethod.GET)
     public ResponseEntity<IdentityResponseDTO> finishFlow(HttpServletRequest request) {
+    	validateParams(request);
+        
         OidcRequestParameters originalParams = (OidcRequestParameters) request.getSession().getAttribute("initParams");
+        validateState(request, originalParams);
+        
         OidcResponseParameters response = new OidcResponseParameters();
         response.setState(request.getParameter("state"));
         response.setCode(request.getParameter("code"));
-    	
-        validateState(request, originalParams);        
-
         IdentityResponseDTO identity = getFacade().extractIdentity(response, originalParams);
+        
         return ResponseEntity.ok(identity);
     }
 
+    private void validateParams(HttpServletRequest request) {
+		if (request.getParameter("code") == null) {
+			throw new IllegalParameterException("Request missing code");
+		}
+	}
+    
 	private void validateState(HttpServletRequest request, OidcRequestParameters originalParams) {
 		if (originalParams.getState() == null || 
         	originalParams.getState().length() == 0 ||
