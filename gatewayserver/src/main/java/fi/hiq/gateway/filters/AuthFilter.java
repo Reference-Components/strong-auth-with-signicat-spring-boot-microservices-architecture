@@ -8,7 +8,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -42,8 +41,6 @@ public class AuthFilter implements GlobalFilter {
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		ServerHttpRequest request = exchange.getRequest();
-		System.out.println("*************************************");
-		System.out.println(request.getURI().getPath());	
 		if (routerValidator.isSecured.test(request)) {
 			String authToken = filterUtils.getAuthorizationToken(request.getHeaders());
 			if (authToken != null) {
