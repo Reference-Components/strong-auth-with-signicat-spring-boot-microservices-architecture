@@ -31,6 +31,8 @@ import com.nimbusds.jose.jwk.KeyType;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
+
 public class KeystoreLoader extends KeyCache {
     private final Logger logger = LoggerFactory.getLogger(KeystoreLoader.class);
 
@@ -62,11 +64,11 @@ public class KeystoreLoader extends KeyCache {
             key = keystore.getKey(keyAlias, readPassword().toCharArray());
         } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
             logger.info(e.getMessage());
-            throw new OidcDemoException("Loading keystored failed!", e);
+            throw new CommonOidcException("Loading keystored failed!", e);
         }
 
         if (key == null) {
-            throw new OidcDemoException("No such key in OIDC key store:" + keyAlias);
+            throw new CommonOidcException("No such key in OIDC key store:" + keyAlias);
         }
 
         return key;
@@ -78,7 +80,7 @@ public class KeystoreLoader extends KeyCache {
         try {
             properties.load(stream);
         } catch (IOException e) {
-            throw new OidcDemoException("Couldn't load application properties!", e);
+            throw new CommonOidcException("Couldn't load application properties!", e);
         }
         return properties;
     }
@@ -98,7 +100,7 @@ public class KeystoreLoader extends KeyCache {
                 keystore.load(stream, password.toCharArray());
             } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
                 logger.error("Loading keystore failed!");
-                throw new OidcDemoException("Loading keystore failed!", e);
+                throw new CommonOidcException("Loading keystore failed!", e);
             } finally {
                 if (stream != null) {
                     try {
@@ -120,7 +122,7 @@ public class KeystoreLoader extends KeyCache {
             publicKey = pickSignatureKey(publicKeys);
         } catch (ParseException | JOSEException | IOException e) {
             logger.error("Loading JWKS for OIDC signature verification failed!");
-            throw new OidcDemoException("Loading JWKS for OIDC signature verification failed!", e);
+            throw new CommonOidcException("Loading JWKS for OIDC signature verification failed!", e);
         }
 
         return publicKey;
@@ -132,7 +134,7 @@ public class KeystoreLoader extends KeyCache {
                 return ((RSAKey) jwk).toRSAPublicKey();
             }
         }
-        throw new OidcDemoException("Supported signature verification not found in key set!");
+        throw new CommonOidcException("Supported signature verification not found in key set!");
     }
 
     @Override
@@ -177,7 +179,7 @@ public class KeystoreLoader extends KeyCache {
             return (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(keySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             logger.error("Error generating public key", e);
-            throw new OidcDemoException("Couldn't derive public key to be shown in JWKS URL from private key!", e);
+            throw new CommonOidcException("Couldn't derive public key to be shown in JWKS URL from private key!", e);
         }
     }
 

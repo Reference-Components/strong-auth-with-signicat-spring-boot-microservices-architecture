@@ -15,15 +15,15 @@ import com.nimbusds.jose.jwk.RSAKey;
 
 import fi.hiq.identity.oidc.domain.AuthorizationCodeHandler;
 import fi.hiq.identity.oidc.domain.AuthorizationRequestHandler;
-import fi.hiq.identity.oidc.domain.Configuration;
+import fi.hiq.identity.oidc.domain.OidcClientConfiguration;
 import fi.hiq.identity.oidc.domain.IdTokenHandler;
-import fi.hiq.identity.oidc.domain.Identity;
 import fi.hiq.identity.oidc.domain.JwksLoader;
 import fi.hiq.identity.oidc.domain.KeystoreLoader;
-import fi.hiq.identity.oidc.domain.OidcDemoException;
 import fi.hiq.identity.oidc.domain.OidcKey;
 import fi.hiq.identity.oidc.domain.OidcRequestParameters;
 import fi.hiq.identity.oidc.domain.OidcResponseParameters;
+import fi.hiq.identity.oidc.dto.IdentityResponseDTO;
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
 
 public class OidcFacade {
 
@@ -42,7 +42,7 @@ public class OidcFacade {
 
     @Autowired
     public OidcFacade() {
-        String location = Configuration.KEYSTORE_LOCATION;
+        String location = OidcClientConfiguration.KEYSTORE_LOCATION;
         keyLoader = new KeystoreLoader(location);
         jwksLoader = new JwksLoader();
         authorizationRequestHandler = new AuthorizationRequestHandler(keyLoader);
@@ -50,14 +50,14 @@ public class OidcFacade {
         idTokenHandler = new IdTokenHandler(keyLoader);
     }
 
-    public Identity extractIdentity(OidcResponseParameters response, OidcRequestParameters requestData) {
+    public IdentityResponseDTO extractIdentity(OidcResponseParameters response, OidcRequestParameters requestData) {
         try {
-            jwksLoader.setJwksProxy(Configuration.JWKS_PROXY);
+            jwksLoader.setJwksProxy(OidcClientConfiguration.JWKS_PROXY);
             String encryptedIdToken = this.getIdToken(response, requestData);
             return idTokenHandler.extractIdentity(encryptedIdToken, keyLoader, jwksLoader);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new OidcDemoException("Error extracting identity!", e);
+            throw new CommonOidcException("Error extracting identity!", e);
         }
     }
     
@@ -68,7 +68,7 @@ public class OidcFacade {
             return idToken; 
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new OidcDemoException("Error extracting decrypted ID token!", e);
+            throw new CommonOidcException("Error extracting decrypted ID token!", e);
         }
     }
 
@@ -76,17 +76,17 @@ public class OidcFacade {
         OidcRequestParameters result = new OidcRequestParameters();
 
         // Identity broker specific settings
-        result.setClientId(Configuration.CLIENT_ID);
-        result.setResponseType(Configuration.RESPONSE_TYPE);
-        result.setEndpointUrl(Configuration.AUTHORIZE_URL);
-        result.setJwksProxy(Configuration.JWKS_PROXY);
-        result.setTokenUrl(Configuration.TOKEN_URL);
-        result.setTokenProxy(Configuration.TOKEN_PROXY);
-        result.setPrompt(Configuration.PROMPT);
-        result.setRedirectUri(Configuration.REDIRECT_URI);
+        result.setClientId(OidcClientConfiguration.CLIENT_ID);
+        result.setResponseType(OidcClientConfiguration.RESPONSE_TYPE);
+        result.setEndpointUrl(OidcClientConfiguration.AUTHORIZE_URL);
+        result.setJwksProxy(OidcClientConfiguration.JWKS_PROXY);
+        result.setTokenUrl(OidcClientConfiguration.TOKEN_URL);
+        result.setTokenProxy(OidcClientConfiguration.TOKEN_PROXY);
+        result.setPrompt(OidcClientConfiguration.PROMPT);
+        result.setRedirectUri(OidcClientConfiguration.REDIRECT_URI);
 
         // Identity provider specific settings
-        result.setScope(Configuration.SCOPE);
+        result.setScope(OidcClientConfiguration.SCOPE);
         result.setUiLocales(lang);
         result.setFtnIdpId(idp);
         result.setScope(getScope());
@@ -118,7 +118,7 @@ public class OidcFacade {
             authorizationRequestHandler.sign(signedResponse);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new OidcDemoException("Signing authorization request failed!", e);
+            throw new CommonOidcException("Signing authorization request failed!", e);
         }
         logger.info("Signed response: {}", signedResponse);
         return signedResponse;

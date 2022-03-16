@@ -1,8 +1,8 @@
-package fi.hiq.identity.oidc.domain;
+package fi.hiq.identity.oidc.dto;
 
 import java.io.Serializable;
 
-public class Identity implements Serializable {
+public class IdentityResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // First & maybe middle / last name.
@@ -10,11 +10,11 @@ public class Identity implements Serializable {
     private String identityRawData;
     private String idToken;
 
-    public Identity() {
+    public IdentityResponseDTO() {
         // Does nothing but required by SonarQube.
     }
 
-    public Identity(String name) {
+    public IdentityResponseDTO(String name) {
         this.name = name;
     }
 

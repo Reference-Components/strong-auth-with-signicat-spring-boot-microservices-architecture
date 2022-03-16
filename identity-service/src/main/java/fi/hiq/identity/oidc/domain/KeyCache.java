@@ -2,6 +2,8 @@ package fi.hiq.identity.oidc.domain;
 
 import java.util.List;
 
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
+
 abstract class KeyCache {
     public static final long DEFAULT_TTL_IN_MILLIS = 5L * 60L * 1000L;
 
@@ -44,7 +46,7 @@ abstract class KeyCache {
             clear();
             return getKeyById(keyId, false);
         } else {
-            throw new OidcDemoException("No key with ID " + keyId);
+            throw new CommonOidcException("No key with ID " + keyId);
         }
     }
 }

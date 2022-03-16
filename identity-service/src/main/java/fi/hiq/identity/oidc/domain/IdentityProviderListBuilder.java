@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.hiq.identity.oidc.domain.idp.IdentityProviderList;
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
 
 public class IdentityProviderListBuilder {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(IdentityProviderListBuilder.class);
@@ -23,11 +24,11 @@ public class IdentityProviderListBuilder {
 
     public IdentityProviderListBuilder(String url) {
         if (url == null) {
-            String defaultUrl = Configuration.IDP_LIST_URL;
+            String defaultUrl = OidcClientConfiguration.IDP_LIST_URL;
             if (!defaultUrl.endsWith("/")) {
                 defaultUrl += "/";
             }
-            defaultUrl += Configuration.CLIENT_ID;
+            defaultUrl += OidcClientConfiguration.CLIENT_ID;
             idpUrl = defaultUrl;
         } else {
             idpUrl = url;
@@ -62,7 +63,7 @@ public class IdentityProviderListBuilder {
 
             return parse(get(target, request));
         } catch (Exception e) {
-            throw new OidcDemoException("Building the list of identity providers failed!", e);
+            throw new CommonOidcException("Building the list of identity providers failed!", e);
         }
     }
 

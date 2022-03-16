@@ -15,6 +15,8 @@ import com.nimbusds.jose.jwk.KeyType;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
+
 public class JwksLoader extends KeyCache {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(JwksLoader.class);
 
@@ -34,7 +36,7 @@ public class JwksLoader extends KeyCache {
             return pickSignatureKeys(publicKeys);
         } catch (ParseException | JOSEException | IOException e) {
             logger.error("Loading JWKS for OIDC signature verification failed!", e);
-            throw new OidcDemoException("Loading JWKS for OIDC signature verification failed!", e);
+            throw new CommonOidcException("Loading JWKS for OIDC signature verification failed!", e);
         }
     }
 
@@ -59,7 +61,7 @@ public class JwksLoader extends KeyCache {
             }
         }
         if (result.isEmpty()) {
-            throw new OidcDemoException("Supported signature verification keys not found in key set!");
+            throw new CommonOidcException("Supported signature verification keys not found in key set!");
         }
         return result;
     }

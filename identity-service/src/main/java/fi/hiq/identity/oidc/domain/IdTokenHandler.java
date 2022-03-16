@@ -14,6 +14,9 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
+import fi.hiq.identity.oidc.dto.IdentityResponseDTO;
+import fi.hiq.identity.oidc.exceptions.CommonOidcException;
+
 public class IdTokenHandler {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(IdTokenHandler.class);
 
@@ -23,7 +26,7 @@ public class IdTokenHandler {
         this.keyLoader = keyLoader;
     }
 
-    public Identity extractIdentity(String idToken, KeystoreLoader keystore, JwksLoader jwksLoader) {
+    public IdentityResponseDTO extractIdentity(String idToken, KeystoreLoader keystore, JwksLoader jwksLoader) {
         try {
         	String decryptedIdToken = this.decryptIdToken(idToken, keystore);
         	
@@ -38,14 +41,14 @@ public class IdTokenHandler {
             idRawData = idRawData.replace(",", ",\n\t");
             idRawData = idRawData.replace("{", "{\n\t");
             idRawData = idRawData.replace("}", "\n}");
-            Identity identity = new Identity();
+            IdentityResponseDTO identity = new IdentityResponseDTO();
             identity.setIdToken(decryptedIdToken);
             identity.setIdentityRawData(idRawData);
             identity.setName(claims.getStringClaim("name"));
             return identity;
         } catch (JOSEException | ParseException e) {
             logger.error("Error extracting identity from id token!", e);
-            throw new OidcDemoException("Error extracting identity from id token!");
+            throw new CommonOidcException("Error extracting identity from id token!");
         }
     }
 
@@ -61,7 +64,7 @@ public class IdTokenHandler {
             return e.getPayload().toString();
         } catch (JOSEException | ParseException e) {
             logger.error("Error decrypting id token!", e);
-            throw new OidcDemoException("Error decrypting id token!");
+            throw new CommonOidcException("Error decrypting id token!");
         }
     }
 
@@ -70,7 +73,7 @@ public class IdTokenHandler {
         boolean isMatching = jwt.verify(very);
         logger.info("ID Token signature matches: {}", isMatching);
         if (!isMatching) {
-            throw new OidcDemoException("ID Token signature verification failed!");
+            throw new CommonOidcException("ID Token signature verification failed!");
         }
     }
 }

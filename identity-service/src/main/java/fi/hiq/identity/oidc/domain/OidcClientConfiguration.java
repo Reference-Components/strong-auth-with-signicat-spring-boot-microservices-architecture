@@ -1,6 +1,6 @@
 package fi.hiq.identity.oidc.domain;
 
-public class Configuration {
+public class OidcClientConfiguration {
     public static final String KEYSTORE_LOCATION = "saippuakauppias.jks";
 
     public static final String CLIENT_ID = "saippuakauppias";
@@ -15,7 +15,7 @@ public class Configuration {
     public static final String REDIRECT_URI = "http://localhost:8080/foo";
     public static final String SCOPE = "openid profile personal_identity_code";
 
-    private Configuration() {
+    private OidcClientConfiguration() {
         // Does nothing but required by SonarQube
     }
 }
