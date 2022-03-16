@@ -11,7 +11,7 @@ import fi.hiq.identity.oidc.dto.ErrorResponseDTO;
 @ControllerAdvice
 public class AuthResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(IllegalParameterException.class)
+	@ExceptionHandler(value = { IllegalParameterException.class, SessionExpiredException.class })
 	public ResponseEntity<ErrorResponseDTO> handleCustomDataNotFoundExceptions(Exception e) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 	        

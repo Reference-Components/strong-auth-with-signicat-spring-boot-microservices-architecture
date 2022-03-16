@@ -17,6 +17,7 @@ import fi.hiq.identity.oidc.domain.OidcResponseParameters;
 import fi.hiq.identity.oidc.dto.AuthResponseDTO;
 import fi.hiq.identity.oidc.dto.IdentityResponseDTO;
 import fi.hiq.identity.oidc.exceptions.IllegalParameterException;
+import fi.hiq.identity.oidc.exceptions.SessionExpiredException;
 import fi.hiq.identity.oidc.facade.OidcFacade;
 
 @RestController
@@ -65,9 +66,9 @@ public class AuthController {
 	}
     
 	private void validateState(HttpServletRequest request, OidcRequestParameters originalParams) {
-		if (originalParams.getState() == null || 
-        	originalParams.getState().length() == 0 ||
-        	request.getParameter("state") == null || 
+		if (originalParams == null) {
+			throw new SessionExpiredException("Session has expired");
+		} else if (request.getParameter("state") == null || 
         	request.getParameter("state").length() == 0) {
         	throw new IllegalParameterException("Request missing state");
         } else if (!originalParams.getState().equals(request.getParameter("state"))) {
