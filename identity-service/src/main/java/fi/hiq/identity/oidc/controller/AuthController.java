@@ -27,6 +27,12 @@ public class AuthController {
 
     private OidcFacade facade;
 
+    @RequestMapping(value = "/jwks", method = RequestMethod.GET)
+    @ResponseBody
+    public String jwks() {
+        return getFacade().getJwks();
+    }
+    
     @RequestMapping(value="/authorize", method = RequestMethod.GET)
     public ResponseEntity<AuthResponseDTO> initFlow(HttpServletRequest request) {
 
@@ -46,26 +52,30 @@ public class AuthController {
 
     @RequestMapping(value="/token", method = RequestMethod.GET)
     public ResponseEntity<IdentityResponseDTO> finishFlow(HttpServletRequest request) {
-    	validateParams(request);
-        
-        OidcRequestParameters originalParams = (OidcRequestParameters) request.getSession().getAttribute("initParams");
-        validateState(request, originalParams);
-        
+    	validateRequest(request);
+
         OidcResponseParameters response = new OidcResponseParameters();
         response.setState(request.getParameter("state"));
         response.setCode(request.getParameter("code"));
+        OidcRequestParameters originalParams = getOriginalParameters(request);
         IdentityResponseDTO identity = getFacade().extractIdentity(response, originalParams);
         
         return ResponseEntity.ok(identity);
     }
 
+    private void validateRequest(HttpServletRequest request) {
+    	validateParams(request);
+    	validateState(request);
+    }
+   
     private void validateParams(HttpServletRequest request) {
 		if (request.getParameter("code") == null) {
 			throw new IllegalParameterException("Request missing code");
 		}
 	}
     
-	private void validateState(HttpServletRequest request, OidcRequestParameters originalParams) {
+	private void validateState(HttpServletRequest request) {
+		OidcRequestParameters originalParams = getOriginalParameters(request);
 		if (originalParams == null) {
 			throw new SessionExpiredException("Session has expired");
 		} else if (request.getParameter("state") == null || 
@@ -76,12 +86,10 @@ public class AuthController {
         }
 	}
 
-    @RequestMapping(value = "/jwks", method = RequestMethod.GET)
-    @ResponseBody
-    public String jwks() {
-        return getFacade().getJwks();
+	private OidcRequestParameters getOriginalParameters(HttpServletRequest request) {
+    	return (OidcRequestParameters) request.getSession().getAttribute("initParams");
     }
-
+	
     private OidcFacade getFacade() {
         if (facade == null) {
             facade = new OidcFacade();
