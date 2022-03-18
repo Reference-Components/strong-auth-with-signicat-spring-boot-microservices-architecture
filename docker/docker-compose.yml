@@ -1,6 +1,17 @@
 version: "3.2"
 
 services:
+  sessioncache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - cache:/data
+  volumes:
+    cache:
+      driver: local
   configserver:
     image: configserver:latest
     build:
@@ -65,6 +76,8 @@ services:
       CONFIGSERVER_URI: "http://configserver:8071"
       CONFIGSERVER_PORT: "8071"
     depends_on:
+      sessioncache:
+        condition: service_started
       configserver:
         condition: service_healthy
       eurekaserver:
