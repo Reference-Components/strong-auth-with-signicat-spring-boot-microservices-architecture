@@ -1,32 +1,48 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { exhangeCodeForUserData } from '../services/authService'
 import { useSearchParams } from 'react-router-dom'
-import { UserData } from '../types'
+import { AuthContext } from '../context/AuthContextProvider'
 
 const useUserData = () => {
+    const authContext = useContext(AuthContext)
     const [searchParams] = useSearchParams()
-    const [userData, setUserData] = useState<UserData>({})
+    const [fetching, setFetching] = useState<boolean>(true)
+    const [initialized, setInitialized] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
 
-    const fetchUserData = useCallback(async (code: string | null, state: string | null) => {
-        const data = await exhangeCodeForUserData(code, state)
-        if (data.idToken && data.name && data.identityRawData) {
-            setUserData({
-                name: data.name,
-                idToken: data.idToken,
-                identityRawData: data.identityRawData,
-            })
-        }
-    }, [])
+    const updateUserData = useCallback(
+        async (code: string | null, state: string | null) => {
+            try {
+                const data = await exhangeCodeForUserData(code, state)
+                if (data.idToken && data.name && data.identityRawData) {
+                    authContext.setUserData({
+                        name: data.name,
+                        idToken: data.idToken,
+                        identityRawData: data.identityRawData,
+                    })
+                    authContext.setAuthenticated(true)
+                    setFetching(false)
+                }
+            } catch (err: unknown) {
+                console.error(err)
+                const e = err as Error
+                setFetching(false)
+                setError(e.message)
+            }
+        },
+        [authContext],
+    )
 
     useEffect(() => {
-        if (!userData.idToken) {
+        if (!initialized) {
             const code = searchParams.get('code')
             const state = searchParams.get('state')
-            fetchUserData(code, state)
+            setInitialized(true)
+            updateUserData(code, state)
         }
-    }, [userData, searchParams, fetchUserData])
+    }, [searchParams, updateUserData, authContext, error, fetching, initialized])
 
-    return userData
+    return [fetching, error, setInitialized]
 }
 
 export default useUserData

@@ -1,11 +1,16 @@
 import { apiBaseUrl } from '../config/config'
 import { AuthUrlResponse, UserDataResponse } from '../types'
 
+type ErrorBody = {
+    status: string
+    message: string
+}
+
 export const getAuthUrl = async (): Promise<AuthUrlResponse> => {
     try {
         const response = await fetch(`${apiBaseUrl}/identity/authorize`)
         if (response.status !== 200) {
-            handleErrors(response)
+            return handleErrors(response)
         }
         storeSessionIfPresent(response)
         return await response.json()
@@ -25,7 +30,7 @@ export const exhangeCodeForUserData = async (code: string | null, state: string 
         })
 
         if (response.status !== 200) {
-            handleErrors(response)
+            return handleErrors(response)
         }
 
         return await response.json()
@@ -37,7 +42,8 @@ export const exhangeCodeForUserData = async (code: string | null, state: string 
 
 const handleErrors = async (response: Response) => {
     console.error(response)
-    return Promise.reject(new Error(response.statusText))
+    const body = (await response.json()) as ErrorBody
+    return Promise.reject(new Error(`${response.statusText} - ${body.message}`))
 }
 
 const storeSessionIfPresent = (response: Response) => {
