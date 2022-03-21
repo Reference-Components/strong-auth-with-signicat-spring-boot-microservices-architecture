@@ -1,5 +1,9 @@
 version: "3.2"
 
+networks:
+  backend:
+    driver: bridge
+
 services:
   sessioncache:
     image: redis:6.2-alpine
@@ -7,11 +11,12 @@ services:
     ports:
       - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes:
-      - cache:/data
-  volumes:
-    cache:
-      driver: local
+    networks:
+      backend:
+        aliases:
+          - "sessioncache"
+  # volumes:
+  #   - cache:/data
   configserver:
     image: configserver:latest
     build:
@@ -76,8 +81,8 @@ services:
       CONFIGSERVER_URI: "http://configserver:8071"
       CONFIGSERVER_PORT: "8071"
     depends_on:
-      sessioncache:
-        condition: service_started
+      # sessioncache:
+      #   condition: service_started
       configserver:
         condition: service_healthy
       eurekaserver:
@@ -148,6 +153,6 @@ services:
   #     backend:
   #       aliases:
   #         - "keycloak"
-networks:
-  backend:
-    driver: bridge
+# volumes:
+#   cache:
+#     driver: local

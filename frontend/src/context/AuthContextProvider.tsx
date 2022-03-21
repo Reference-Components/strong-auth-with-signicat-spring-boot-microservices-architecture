@@ -1,11 +1,18 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { UserData } from '../types'
 
 interface AuthContextValues {
     isAuthenticated: boolean
+    userData?: UserData
+    setAuthenticated: (a: boolean) => void
+    setUserData: (data: UserData) => void
 }
 
 const defaultAuthContextValues: AuthContextValues = {
     isAuthenticated: false,
+    userData: undefined,
+    setAuthenticated: () => console.warn('setAuthenticated not implemented'),
+    setUserData: () => console.warn('setUserData not implemented'),
 }
 
 export const AuthContext = createContext<AuthContextValues>(defaultAuthContextValues)
@@ -15,12 +22,22 @@ interface AuthContextProviderProps {
 }
 
 const AuthContextProvider = (props: AuthContextProviderProps) => {
-    console.log('rendering AuthContextProvider')
-
-    // Creating the local state to keep track of the authentication
     const [isAuthenticated, setAuthenticated] = useState<boolean>(false)
+    const [userData, setUserData] = useState<UserData>({})
 
-    return <AuthContext.Provider value={{ isAuthenticated }}>{props.children}</AuthContext.Provider>
+    useEffect(() => {
+        if (!isAuthenticated) {
+            console.log('user is not yet authenticated.')
+        } else {
+            console.log('user is authenticated')
+        }
+    }, [isAuthenticated])
+
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, setAuthenticated, userData, setUserData }}>
+            {props.children}
+        </AuthContext.Provider>
+    )
 }
 
 export default AuthContextProvider

@@ -19,6 +19,7 @@ spring:
           '[/**]':
             allowedOrigins: "http://localhost:3000"
             allowedHeaders: "*"
+            exposedHeaders: "X-Auth-Token"
             allowedMethods:
               - GET
               - POST
