@@ -1,8 +1,8 @@
-package fi.hiq.info.dto;
+package fi.hiq.resource.dto;
 
 public class HelloResponseDTO {
 	private String message;
-
+	
 	public HelloResponseDTO() {
 		super();
 	}

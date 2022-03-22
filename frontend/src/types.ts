@@ -19,3 +19,5 @@ export type UserDataResponse = Required<UserData>
 export type InfoMessageResponse = {
     message: string
 }
+
+export type ResourceMessageResponse = InfoMessageResponse
