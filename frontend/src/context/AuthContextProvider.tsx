@@ -23,7 +23,7 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider = (props: AuthContextProviderProps) => {
     const [isAuthenticated, setAuthenticated] = useState<boolean>(false)
-    const [userData, setUserData] = useState<UserData>({})
+    const [userData, setUserData] = useState<UserData>()
 
     useEffect(() => {
         if (!isAuthenticated) {

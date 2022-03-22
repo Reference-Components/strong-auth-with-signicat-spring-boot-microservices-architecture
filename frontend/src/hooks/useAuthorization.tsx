@@ -29,6 +29,7 @@ const useAuthorization = (): ReturnType => {
                     authContext.setUserData({
                         name: data.name,
                         idToken: data.idToken,
+                        exp: data.exp,
                         identityRawData: data.identityRawData,
                     })
                     authContext.setAuthenticated(true)

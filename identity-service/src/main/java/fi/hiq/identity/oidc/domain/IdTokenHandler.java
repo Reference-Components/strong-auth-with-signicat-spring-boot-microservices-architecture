@@ -43,6 +43,7 @@ public class IdTokenHandler {
             idRawData = idRawData.replace("}", "\n}");
             IdentityResponseDTO identity = new IdentityResponseDTO();
             identity.setIdToken(decryptedIdToken);
+            identity.setExp(claims.getExpirationTime().getTime());
             identity.setIdentityRawData(idRawData);
             identity.setName(claims.getStringClaim("name"));
             return identity;

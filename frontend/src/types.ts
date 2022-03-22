@@ -9,9 +9,10 @@ export type ApiErrorBody = {
 }
 
 export type UserData = {
-    name?: string
-    idToken?: string
-    identityRawData?: string
+    name: string
+    idToken: string
+    exp: number
+    identityRawData: string
 }
 
 export type UserDataResponse = Required<UserData>
