@@ -1,26 +1,36 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getAuthUrl } from '../services/authService'
 
-const useAuthEndpoint = () => {
+type ReturnType = [authEndpoint: string | undefined, error: string | undefined, fetching: boolean]
+
+const useAuthEndpoint = (): ReturnType => {
     const [authEndpoint, setAuthEndpoint] = useState<string>('')
+    const [error, setError] = useState<string>()
+    const [fetching, setFetching] = useState<boolean>(true)
 
     const getAuthEndPoint = useCallback(async () => {
-        const authEndpointData = await getAuthUrl()
-        if (authEndpointData) {
+        try {
+            const authEndpointData = await getAuthUrl()
             const { endpointUrl } = authEndpointData
+            setFetching(false)
             setAuthEndpoint(endpointUrl)
-        } else {
-            setAuthEndpoint('/')
+            setError(undefined)
+        } catch (err: unknown) {
+            console.error(err)
+            const e = err as Error
+            setFetching(false)
+            setError(e.message)
+            setAuthEndpoint('')
         }
     }, [])
 
     useEffect(() => {
-        if (!authEndpoint) {
+        if (!authEndpoint && fetching) {
             getAuthEndPoint()
         }
-    }, [authEndpoint, getAuthEndPoint])
+    }, [authEndpoint, fetching, getAuthEndPoint])
 
-    return authEndpoint
+    return [authEndpoint, error, fetching]
 }
 
 export default useAuthEndpoint

@@ -1,17 +1,28 @@
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
-import useUserData from '../hooks/useUserData'
+import useAuthorization from '../hooks/useAuthorization'
 
 const Redirect = () => {
     const authContext = useContext(AuthContext)
-    const [fetching, error] = useUserData()
+    const [fetching, error] = useAuthorization()
     const navigate = useNavigate()
 
-    if (fetching || !error) {
+    if (fetching) {
+        return <div>Fetching...</div>
+    }
+
+    if (!fetching || !error) {
         return (
             <div>
-                <p>Exhanged code for token: {authContext.userData?.idToken}</p>
+                <h1>Exhanged code for token & identity</h1>
+                <p>Raw identity data:</p>
+                <pre>{authContext.userData?.identityRawData}</pre>
+
+                <small>
+                    <p>Id token: {authContext.userData?.idToken}</p>
+                </small>
+
                 <button onClick={() => navigate('/')}>Go home</button>
             </div>
         )

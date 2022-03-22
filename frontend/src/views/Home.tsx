@@ -4,13 +4,17 @@ import useAuthEndpoint from '../hooks/useAuthEndpoint'
 
 const Home = (): JSX.Element => {
     const authContext = useContext(AuthContext)
-    const authUrl = useAuthEndpoint()
+    const [authEndpoint, error] = useAuthEndpoint()
+
+    if (error) {
+        return <div>Failed to retrieve authorization endpoint: {error}</div>
+    }
 
     if (!authContext.isAuthenticated) {
         return (
             <div>
                 <p>You are not logged in</p>
-                <button onClick={() => window.location.replace(authUrl)}>Log in</button>
+                <button onClick={() => window.location.replace(authEndpoint || '/')}>Log in</button>
             </div>
         )
     }
@@ -18,8 +22,6 @@ const Home = (): JSX.Element => {
     return (
         <div>
             <p>You are logged in as: {authContext.userData?.name}</p>
-            <p>Raw identity data:</p>
-            <pre>{authContext.userData?.identityRawData}</pre>
         </div>
     )
 }
