@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { exhangeCodeForUserData } from '../services/authService'
 import { useSearchParams } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
+import TokenManager from '../services/TokenManager'
 
 type ReturnType = [fetching: boolean, error: string | undefined, reset: () => void]
 
@@ -11,6 +12,7 @@ const useAuthorization = (): ReturnType => {
     const [fetching, setFetching] = useState<boolean>(true)
     const [initialized, setInitialized] = useState<boolean>(false)
     const [error, setError] = useState<string>()
+    const tokenManager = TokenManager.getInstance()
 
     const reset = () => {
         setInitialized(false)
@@ -23,6 +25,7 @@ const useAuthorization = (): ReturnType => {
                 const data = await exhangeCodeForUserData(code, state)
                 if (data.idToken && data.name && data.identityRawData) {
                     setFetching(false)
+                    tokenManager.setIdToken(data.idToken)
                     authContext.setUserData({
                         name: data.name,
                         idToken: data.idToken,
@@ -38,7 +41,7 @@ const useAuthorization = (): ReturnType => {
                 setError(e.message)
             }
         },
-        [authContext],
+        [authContext, tokenManager],
     )
 
     useEffect(() => {

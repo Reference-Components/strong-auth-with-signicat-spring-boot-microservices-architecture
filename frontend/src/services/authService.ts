@@ -1,10 +1,6 @@
 import { apiBaseUrl } from '../config/config'
 import { AuthUrlResponse, UserDataResponse } from '../types'
-
-type ErrorBody = {
-    status: string
-    message: string
-}
+import { handleErrors } from './utils'
 
 export const getAuthUrl = async (): Promise<AuthUrlResponse> => {
     try {
@@ -38,12 +34,6 @@ export const exhangeCodeForUserData = async (code: string | null, state: string 
         console.error(error)
         return Promise.reject(error)
     }
-}
-
-const handleErrors = async (response: Response) => {
-    console.error(response)
-    const body = (await response.json()) as ErrorBody
-    return Promise.reject(new Error(`${response.statusText} - ${body.message}`))
 }
 
 const storeSessionIfPresent = (response: Response) => {

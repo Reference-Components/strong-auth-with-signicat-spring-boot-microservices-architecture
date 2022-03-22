@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import fi.hiq.info.dto.HelloResponseDTO;
 import fi.hiq.info.service.InfoService;
 
 @RestController
@@ -18,12 +19,12 @@ public class InfoController {
 	
 	
     @RequestMapping(value="/hello", method = RequestMethod.GET)
-    public ResponseEntity<String> getHello() {
-        return ResponseEntity.ok("Response from info-service");
+    public ResponseEntity<HelloResponseDTO> getHello() {
+        return ResponseEntity.ok(new HelloResponseDTO("Response from info-service"));
     }
     
     @RequestMapping(value="/resource-message", method = RequestMethod.GET)
-    public ResponseEntity<String> getMessageFromResourceService(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<HelloResponseDTO> getMessageFromResourceService(@RequestHeader("Authorization") String token) {
     	return ResponseEntity.ok(this.infoService.getMessageFromResourceService(token));
     }
 

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fi.hiq.info.dto.HelloResponseDTO;
 import fi.hiq.info.utils.ResourceRestTemplateClient;
 import fi.hiq.info.utils.UserContextHolder;
 
@@ -16,8 +17,8 @@ public class InfoService {
 	@Autowired
 	ResourceRestTemplateClient resourceRestTemplateClient;
 	
-	public String getMessageFromResourceService(String token) {
-		String message = this.resourceRestTemplateClient.getResourceMessage(token);
+	public HelloResponseDTO getMessageFromResourceService(String token) {
+		HelloResponseDTO message = this.resourceRestTemplateClient.getResourceMessage(token);
 		if (message == null) {
 			logger.debug("getMessageFromResourceService Correlation id: {}",
 					UserContextHolder.getContext().getCorrelationId());

@@ -3,6 +3,11 @@ export type AuthUrlResponse = {
     request: string
 }
 
+export type ApiErrorBody = {
+    status: string
+    message: string
+}
+
 export type UserData = {
     name?: string
     idToken?: string
@@ -10,3 +15,7 @@ export type UserData = {
 }
 
 export type UserDataResponse = Required<UserData>
+
+export type InfoMessageResponse = {
+    message: string
+}
