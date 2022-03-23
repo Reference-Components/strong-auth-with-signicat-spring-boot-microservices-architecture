@@ -1,7 +1,6 @@
 package fi.hiq.identity.oidc.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class IdentityResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;

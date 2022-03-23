@@ -47,7 +47,7 @@ public class OidcFacade {
         jwksLoader = new JwksLoader();
         authorizationRequestHandler = new AuthorizationRequestHandler(keyLoader);
         authorizationCodeHandler = new AuthorizationCodeHandler(keyLoader);
-        idTokenHandler = new IdTokenHandler(keyLoader);
+        idTokenHandler = new IdTokenHandler();
     }
 
     public IdentityResponseDTO extractIdentity(OidcResponseParameters response, OidcRequestParameters requestData) {

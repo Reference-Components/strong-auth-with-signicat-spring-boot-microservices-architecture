@@ -20,12 +20,6 @@ import fi.hiq.identity.oidc.exceptions.CommonOidcException;
 public class IdTokenHandler {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(IdTokenHandler.class);
 
-    private final KeystoreLoader keyLoader;
-
-    public IdTokenHandler(KeystoreLoader keyLoader) {
-        this.keyLoader = keyLoader;
-    }
-
     public IdentityResponseDTO extractIdentity(String idToken, KeystoreLoader keystore, JwksLoader jwksLoader) {
         try {
         	String decryptedIdToken = this.decryptIdToken(idToken, keystore);
