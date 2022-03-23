@@ -24,7 +24,6 @@ const useAuthorization = (): ReturnType => {
             try {
                 const data = await exhangeCodeForUserData(code, state)
                 if (data.idToken && data.name && data.identityRawData) {
-                    setFetching(false)
                     tokenManager.setIdToken(data.idToken)
                     tokenManager.setExp(data.exp)
                     authContext.setUserData({
@@ -33,6 +32,7 @@ const useAuthorization = (): ReturnType => {
                     })
                     authContext.setAuthenticated(true)
                     setError(undefined)
+                    setFetching(false)
                 }
             } catch (err: unknown) {
                 console.error(err)
