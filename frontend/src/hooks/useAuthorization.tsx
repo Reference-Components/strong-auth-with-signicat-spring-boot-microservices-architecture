@@ -26,10 +26,9 @@ const useAuthorization = (): ReturnType => {
                 if (data.idToken && data.name && data.identityRawData) {
                     setFetching(false)
                     tokenManager.setIdToken(data.idToken)
+                    tokenManager.setExp(data.exp)
                     authContext.setUserData({
                         name: data.name,
-                        idToken: data.idToken,
-                        exp: data.exp,
                         identityRawData: data.identityRawData,
                     })
                     authContext.setAuthenticated(true)

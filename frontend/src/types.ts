@@ -15,7 +15,7 @@ export type UserData = {
     identityRawData: string
 }
 
-export type UserDataResponse = Required<UserData>
+export type ContextUserData = Pick<UserData, 'name' | 'identityRawData'>
 
 export type InfoMessageResponse = {
     message: string

@@ -1,11 +1,11 @@
 import { createContext, useEffect, useState } from 'react'
-import { UserData } from '../types'
+import { ContextUserData } from '../types'
 
 interface AuthContextValues {
     isAuthenticated: boolean
-    userData?: UserData
+    userData?: ContextUserData
     setAuthenticated: (a: boolean) => void
-    setUserData: (data: UserData) => void
+    setUserData: (data: ContextUserData) => void
 }
 
 const defaultAuthContextValues: AuthContextValues = {
@@ -23,7 +23,7 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider = (props: AuthContextProviderProps) => {
     const [isAuthenticated, setAuthenticated] = useState<boolean>(false)
-    const [userData, setUserData] = useState<UserData>()
+    const [userData, setUserData] = useState<ContextUserData>()
 
     useEffect(() => {
         if (!isAuthenticated) {

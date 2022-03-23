@@ -1,5 +1,5 @@
 import { apiBaseUrl } from '../config/config'
-import { AuthUrlResponse, UserDataResponse } from '../types'
+import { AuthUrlResponse, UserData } from '../types'
 import { handleErrors } from './utils'
 
 export const getAuthUrl = async (): Promise<AuthUrlResponse> => {
@@ -16,7 +16,7 @@ export const getAuthUrl = async (): Promise<AuthUrlResponse> => {
     }
 }
 
-export const exhangeCodeForUserData = async (code: string | null, state: string | null): Promise<UserDataResponse> => {
+export const exhangeCodeForUserData = async (code: string | null, state: string | null): Promise<UserData> => {
     try {
         const session = retrieveSessionAndFlush()
         const response = await fetch(`${apiBaseUrl}/identity/token/?code=${code}&state=${state}`, {
