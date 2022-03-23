@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import Greeting from '../components/Greeting'
 import { AuthContext } from '../context/AuthContextProvider'
 import useAuthEndpoint from '../hooks/useAuthEndpoint'
 import useLogoutStatus from '../hooks/useLogoutStatus'
@@ -22,7 +23,7 @@ const Home = (): JSX.Element => {
         return (
             <div>
                 <h1>Home</h1>
-                <p>You are logged in as: {authContext.userData?.name}</p>
+                <Greeting />
                 <Link to={'/protected'}>Protected view</Link>
             </div>
         )

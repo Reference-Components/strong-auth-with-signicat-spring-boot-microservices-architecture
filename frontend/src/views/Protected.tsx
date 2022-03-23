@@ -1,16 +1,15 @@
 import { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
-import TokenManager from '../utils/TokenManager'
-import { millisToTimeStr } from '../utils/dateTimeUtils'
 
 import { getInfoHelloMessage, getResourceMessageFromInfoService } from '../services/infoService'
 import { getResourceHelloMessage } from '../services/resourceService'
 import { InfoMessageResponse, ResourceMessageResponse } from '../types'
+import Greeting from '../components/Greeting'
+import UserInfo from '../components/UserInfo'
 
 const Protected = () => {
     const authContext = useContext(AuthContext)
-    const tokenManager = TokenManager.getInstance()
 
     const [infoMessage, setInfoMessage] = useState<InfoMessageResponse>()
     const [infoResourceMessage, setInfoResourceMessage] = useState<InfoMessageResponse>()
@@ -51,18 +50,8 @@ const Protected = () => {
         return (
             <div>
                 <h1>Protected view</h1>
-                <p>
-                    You are logged in as: {authContext.userData?.name} (<Link to={'/logout'}>Log out</Link>).
-                </p>
-                <p>Raw identity data of authenticated user:</p>
-                <pre>{authContext.userData.identityRawData}</pre>
-
-                <p>
-                    <small>Id token: {tokenManager.getIdToken()}</small>
-                </p>
-                <p>
-                    <small>Expires: {millisToTimeStr(tokenManager.getExp())}</small>
-                </p>
+                <Greeting />
+                <UserInfo />
 
                 <div>
                     <p>
