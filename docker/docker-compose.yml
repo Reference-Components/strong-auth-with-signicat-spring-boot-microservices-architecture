@@ -15,8 +15,6 @@ services:
       backend:
         aliases:
           - "sessioncache"
-  # volumes:
-  #   - cache:/data
   configserver:
     image: configserver:latest
     build:
@@ -81,8 +79,6 @@ services:
       CONFIGSERVER_URI: "http://configserver:8071"
       CONFIGSERVER_PORT: "8071"
     depends_on:
-      # sessioncache:
-      #   condition: service_started
       configserver:
         condition: service_healthy
       eurekaserver:
@@ -133,26 +129,14 @@ services:
       backend:
         aliases:
           - "resourceservice"
-  # keycloak:
-  #   image: jboss/keycloak
-  #   restart: always
-  #   environment:
-  #     KEYCLOAK_USER: admin
-  #     KEYCLOAK_PASSWORD: admin
-  #   volumes:
-  #     - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
-  #     - ./saippuakauppias.jks:/opt/jboss/keycloak/saippuakauppias.jks
-  #   command:
-  #     - "-b 0.0.0.0"
-  #     - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
-  #     - "-Dkeycloak.profile.feature.scripts=enabled"
-  #     - "-Dkeycloak.profile.feature.upload_scripts=enabled"
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     backend:
-  #       aliases:
-  #         - "keycloak"
-# volumes:
-#   cache:
-#     driver: local
+  frontend:
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      context: ./../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./../frontend:/home/node/code

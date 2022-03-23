@@ -1,4 +1,4 @@
-import { ViewController } from './viewController'
+import { ViewController } from './views/ViewController'
 
 function App() {
     return <ViewController />
