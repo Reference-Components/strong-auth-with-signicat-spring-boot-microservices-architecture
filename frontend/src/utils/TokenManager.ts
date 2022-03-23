@@ -20,7 +20,7 @@ class TokenManager {
         return this.exp
     }
 
-    public setExp(exp: number) {
+    public setExp(exp: number | undefined) {
         this.exp = exp
     }
 

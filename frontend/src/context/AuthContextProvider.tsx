@@ -5,7 +5,7 @@ interface AuthContextValues {
     isAuthenticated: boolean
     userData?: ContextUserData
     setAuthenticated: (a: boolean) => void
-    setUserData: (data: ContextUserData) => void
+    setUserData: (data: ContextUserData | undefined) => void
 }
 
 const defaultAuthContextValues: AuthContextValues = {

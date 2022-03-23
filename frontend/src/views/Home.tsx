@@ -2,10 +2,12 @@ import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
 import useAuthEndpoint from '../hooks/useAuthEndpoint'
+import useLogoutStatus from '../hooks/useLogoutStatus'
 
 const Home = (): JSX.Element => {
     const authContext = useContext(AuthContext)
     const [authEndpoint, authEndpointError] = useAuthEndpoint()
+    const isLoggedOut = useLogoutStatus()
 
     if (authEndpointError) {
         return (
@@ -29,7 +31,7 @@ const Home = (): JSX.Element => {
     return (
         <div>
             <h1>Home</h1>
-            <p>You are not logged in</p>
+            {isLoggedOut && <p>You have been logged out</p>}
             <a href={authEndpoint}>Log in</a>
         </div>
     )

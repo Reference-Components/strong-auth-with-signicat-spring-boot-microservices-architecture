@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
-import TokenManager from '../services/TokenManager'
+import TokenManager from '../utils/TokenManager'
 import { millisToTimeStr } from '../utils/dateTimeUtils'
 
 import { getInfoHelloMessage, getResourceMessageFromInfoService } from '../services/infoService'
@@ -51,7 +51,9 @@ const Protected = () => {
         return (
             <div>
                 <h1>Protected view</h1>
-                <p>You are logged in as: {authContext.userData?.name}</p>
+                <p>
+                    You are logged in as: {authContext.userData?.name} (<Link to={'/logout'}>Log out</Link>).
+                </p>
                 <p>Raw identity data of authenticated user:</p>
                 <pre>{authContext.userData.identityRawData}</pre>
 

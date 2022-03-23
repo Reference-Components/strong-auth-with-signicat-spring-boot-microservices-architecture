@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { exhangeCodeForUserData } from '../services/authService'
 import { useSearchParams } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContextProvider'
-import TokenManager from '../services/TokenManager'
+import TokenManager from '../utils/TokenManager'
 
 type ReturnType = [fetching: boolean, error: string | undefined, reset: () => void]
 

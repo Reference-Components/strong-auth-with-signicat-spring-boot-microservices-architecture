@@ -1,5 +1,5 @@
 import { ApiErrorBody } from '../types'
-import TokenManager from './TokenManager'
+import TokenManager from '../utils/TokenManager'
 
 const tokenManager = TokenManager.getInstance()
 
