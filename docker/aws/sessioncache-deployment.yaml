@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose-aws.yml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sessioncache
+  name: sessioncache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: sessioncache
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose-aws.yml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend: "true"
+        io.kompose.service: sessioncache
+    spec:
+      containers:
+        - args:
+            - redis-server
+            - --save
+            - "20"
+            - "1"
+            - --loglevel
+            - warning
+            - --requirepass
+            - eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+          image: 848980285290.dkr.ecr.us-east-1.amazonaws.com/sessioncache:dev
+          name: sessioncache
+          ports:
+            - containerPort: 6379
+          resources: {}
+      restartPolicy: Always
+status: {}

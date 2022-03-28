@@ -7,6 +7,7 @@ networks:
 services:
   sessioncache:
     image: redis:6.2-alpine
+    container_name: sessioncache
     restart: always
     ports:
       - "6379:6379"
@@ -68,7 +69,7 @@ services:
     networks:
       backend:
         aliases:
-          - "gateway"
+          - "gatewayserver"
   identityservice:
     image: identityservice:latest
     build:
@@ -129,11 +130,12 @@ services:
       backend:
         aliases:
           - "resourceservice"
-  frontend_dev:
-    container_name: devfrontend
+  frontend-dev:
+    container_name: frontend-dev
     stdin_open: true
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      CHOKIDAR_USEPOLLING: "true"
+      REACT_APP_GATEWAY_URI: "http://localhost:8072"
     build:
       context: ./../frontend
       dockerfile: Dockerfile
@@ -141,10 +143,3 @@ services:
       - "3000:3000"
     volumes:
       - ./../frontend:/home/node/code
-  # frontend_prod:
-  #   container_name: prodfrontend
-  #   build:
-  #     context: ./../frontend
-  #     dockerfile: prod.Dockerfile
-  #   ports:
-  #     - "3000:80"

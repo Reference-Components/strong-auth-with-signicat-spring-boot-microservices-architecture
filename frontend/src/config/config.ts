@@ -1,1 +1,1 @@
-export const apiBaseUrl = 'http://localhost:8072'
+export const apiBaseUrl = process.env.REACT_APP_GATEWAY_URI || 'http://localhost:8072'

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose-aws.yml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: gatewayserver
+  name: gatewayserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: gatewayserver
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose-aws.yml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend: "true"
+        io.kompose.service: gatewayserver
+    spec:
+      containers:
+        - env:
+            - name: CONFIGSERVER_PORT
+              value: "8071"
+            - name: CONFIGSERVER_URI
+              value: http://configserver:8071
+            - name: EUREKASERVER_PORT
+              value: "8070"
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver:8070/eureka/
+            - name: PROFILE
+              value: default
+            - name: SERVER_PORT
+              value: "8072"
+          image: 848980285290.dkr.ecr.us-east-1.amazonaws.com/gatewayserver:dev
+          name: gatewayserver
+          ports:
+            - containerPort: 8072
+          resources: {}
+      restartPolicy: Always
+status: {}
